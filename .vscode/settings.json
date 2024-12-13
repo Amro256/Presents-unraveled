@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Presents Unravelled_Jam2.sln"
+    "dotnet.defaultSolution": "Presents-unraveled.sln"
 }

@@ -9,6 +9,9 @@ public class PlayerShovel : MonoBehaviour
     [SerializeField] LayerMask presentsLayer;
     [SerializeField] Transform playerTransform;
     private float fff = 2f;
+
+    [SerializeField] GameManager.PresentType? HeldPresent;
+    private GameObject currentPresentObject;
     //RayCast2D variables
     RaycastHit2D hit;
 
@@ -40,20 +43,26 @@ public class PlayerShovel : MonoBehaviour
             if(Input.GetMouseButtonDown(1)) //1 represents right button click
             {
 
+                if(HeldPresent.HasValue)
+                {
+                    Debug.Log("You're already holding a present");
+                    return;
+                }
+
                     if(hit.collider.CompareTag("Sweet"))
                     {
-                        presentPickup(hit.collider.gameObject);
-                        Debug.Log("You collected present 1");
+                        presentPickup(hit.collider.gameObject, GameManager.PresentType.Sweet);
+                        Debug.Log("You collected a Candy Cane");
                     }
                     else if(hit.collider.CompareTag("Toy"))
                     {
-                        presentPickup(hit.collider.gameObject);
-                        Debug.Log("You collected present 2");
+                        presentPickup(hit.collider.gameObject, GameManager.PresentType.Toy);
+                        Debug.Log("You collected a Toy");
                     }
                     else if(hit.collider.CompareTag("Plush"))
                     {
-                        presentPickup(hit.collider.gameObject);
-                        Debug.Log("You collected a present");
+                        presentPickup(hit.collider.gameObject, GameManager.PresentType.Plush);
+                        Debug.Log("You collected a Plush");
                     }     
             }
         }
@@ -78,12 +87,37 @@ public class PlayerShovel : MonoBehaviour
     }
 
     //Method to handle Item PickUp
-    private void presentPickup(GameObject present)
+    private void presentPickup(GameObject present, GameManager.PresentType presentType)
     {
+        HeldPresent = presentType;
+        currentPresentObject = present;
+
         Vector3 presentLocation = playerTransform.position + new Vector3(0, fff, 0);
 
-        present.transform.position = presentLocation + playerTransform.position;
-        
-      
+        present.transform.position = presentLocation;
+
+        present.transform.SetParent(playerTransform);
+    }
+
+
+    private void OnTriggerEnter2D(Collider2D other) 
+    {
+        if(HeldPresent.HasValue && other.CompareTag("Child"))
+        {
+            Child child = other.GetComponent<Child>();
+
+            if(child != null)
+            {
+                child.RecivePresent(HeldPresent.Value);
+
+                if(currentPresentObject != null)
+                {
+                    Destroy(currentPresentObject);
+                }
+
+                HeldPresent = null; //Once the player have given the child the present, they wont be holding anything
+            }
+
+        }    
     }
 }

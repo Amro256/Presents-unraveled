@@ -8,6 +8,7 @@ TagManager:
   - Sweet
   - Toy
   - Plush
+  - Child
   layers:
   - Default
   - TransparentFX

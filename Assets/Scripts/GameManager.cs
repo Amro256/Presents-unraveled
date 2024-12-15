@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
 
     //Refernece to the score UI text to update 
     [SerializeField] TMP_Text scoreText;
+    
+    private float DeliverySpeed; //Variable to track delivery speed 
 
 
     void Awake() 
@@ -42,8 +44,8 @@ public class GameManager : MonoBehaviour
         Debug.Log("you gave the child the right present!");
         //Insert "Ho" "Ho" "Ho" Clip here - Audio Clip (Play one shot)
         //Increase the score
-
-        IncreaseScore(10); //Increase the score by 10
+        endDeliveryTime();
+        
    }
 
    public void inCorrectPresent()
@@ -53,20 +55,68 @@ public class GameManager : MonoBehaviour
 
         //Decrease the score 
         DecreaseScore(5); //Decrease the score by 5 
+        DeliverySpeed = 0;
    }
+
+   //public method to start the delivery time
+   public void startDeliveryTime() //Call this method when the player picks ups a present
+   {
+        DeliverySpeed = Time.time;
+   }
+
+
+   //Create a method to calculate the delivery time / end it 
+
+    public void endDeliveryTime()
+    {
+        if(DeliverySpeed == 0) //Checks if the delivery speed is equal to 0 and 
+        return; //if so return nothing (no points added to score)
+
+        float deliveryTime = Time.time - DeliverySpeed; //Check the elapsed time 
+        DeliverySpeed = 0; //Reset the timer
+        addSpeedScore(deliveryTime);
+    }
+
+
+    //Method to add points based on delivery speed /time
+
+    void addSpeedScore(float deliveryTime)
+    {
+        int points = 0;
+
+        if(deliveryTime <= 5f) //Delivered within 10 seconds - Fast
+        {
+            points = Random.Range(15, 20);
+        }
+        else if(deliveryTime <= 10f) //Delivered within 15 seconds - Medium
+        {
+            points = Random.Range(10, 15);
+        }
+        else if (deliveryTime <= 15f) //Delivered within 20 seconds - Slow
+        {
+            points = Random.Range(5, 10);
+        }
+        else
+        {
+            points = Random.Range(1, 3); //Too slow!
+        }
+
+        IncreaseScore(points);
+    }
+
 
    //Create new method for adding and decreasing score based on if the player has given the correct present or not
 
    void IncreaseScore(int amount) //Method to add to the score
    {
         score += amount;
-        scoreText.text = score.ToString();
+        scoreText.text = score.ToString(); //You want to get the text component of the TMP and convert the score to string so it can be displayed
    }
 
    void DecreaseScore(int amount) //Method to remove from the score 
    {
         score -= amount;
-        scoreText.text = score.ToString();
+        scoreText.text = score.ToString(); //You want to get the text component of the TMP and convert the score to string so it can be displayed
         
    }
 }

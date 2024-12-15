@@ -97,6 +97,8 @@ public class PlayerShovel : MonoBehaviour
         present.transform.position = presentLocation;
 
         present.transform.SetParent(playerTransform);
+
+        GameManager.Instance.startDeliveryTime();
     }
 
 
@@ -114,6 +116,8 @@ public class PlayerShovel : MonoBehaviour
                 {
                     Destroy(currentPresentObject);
                 }
+
+                GameManager.Instance.endDeliveryTime(); //Call the end delivery time method
 
                 HeldPresent = null; //Once the player have given the child the present, they wont be holding anything
             }

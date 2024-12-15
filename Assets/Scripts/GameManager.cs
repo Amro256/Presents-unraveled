@@ -23,6 +23,10 @@ public class GameManager : MonoBehaviour
     
     private float DeliverySpeed; //Variable to track delivery speed 
 
+    [SerializeField] GameObject popUpTextPrefab; //Reference to the Text prefab
+    [SerializeField] Transform canvasTrans;
+    
+
 
     void Awake() 
     {
@@ -83,25 +87,37 @@ public class GameManager : MonoBehaviour
     void addSpeedScore(float deliveryTime)
     {
         int points = 0;
+        string message;
+        Color color;
 
         if(deliveryTime <= 5f) //Delivered within 10 seconds - Fast
         {
             points = Random.Range(15, 20);
+            message = "Nice work!";
+            color = Color.green;
         }
         else if(deliveryTime <= 10f) //Delivered within 15 seconds - Medium
         {
             points = Random.Range(10, 15);
+            message = "Not too bad!";
+            color = Color.yellow;
+            
         }
         else if (deliveryTime <= 15f) //Delivered within 20 seconds - Slow
         {
             points = Random.Range(5, 10);
+            message = "Too Slow";
+            color = Color.red;
         }
         else
         {
             points = Random.Range(1, 3); //Too slow!
+            message = "Are you even trying!";
+            color = Color.black; //Maybe change this
         }
 
         IncreaseScore(points);
+        SpawnText(message, color);
     }
 
 
@@ -119,4 +135,11 @@ public class GameManager : MonoBehaviour
         scoreText.text = score.ToString(); //You want to get the text component of the TMP and convert the score to string so it can be displayed
         
    }
+
+    void SpawnText(string message, Color color)
+    {
+        GameObject PopUp = Instantiate(popUpTextPrefab, canvasTrans);
+        TextFadeOut textFade = GetComponent<TextFadeOut>();
+        textFade.TextSetUp(message, color);
+    }
 }
